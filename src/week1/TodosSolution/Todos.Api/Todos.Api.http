@@ -8,5 +8,5 @@ Accept: application/json
 POST {{Todos.Api_HostAddress}}/todos
 Content-Type: application/json
 {
-    "description": "Clean Garage",
+    "description": "Clean Garage"
 }
