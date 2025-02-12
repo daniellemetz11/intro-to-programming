@@ -1,5 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using Alba;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Todos.Api.Todos;
 
@@ -56,10 +58,21 @@ public class GettingTodos
 
         Assert.NotNull(listOfTodos);
 
+        bool found = false;
 
-        var hasMyItem = listOfTodos.Any(item => item.Description == itemToAdd.Description);
+       //fewer elements , less stuff than regular for loop
+        foreach (TodoListItem v in listOfTodos)
+        {
+            if(v.Description == itemToAdd.Description)
+            {
+                found = true;
+                break;
+            }
+        }
 
-        Assert.True(hasMyItem);
+        //var hasMyItem = listOfTodos.Any(item => item.Description == itemToAdd.Description);
+
+        Assert.True(found);
     }
 
 }
