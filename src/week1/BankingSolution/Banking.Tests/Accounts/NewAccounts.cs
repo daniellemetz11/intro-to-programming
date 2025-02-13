@@ -1,4 +1,7 @@
-﻿using Banking.Domain;
+﻿
+
+using Banking.Domain;
+
 namespace Banking.Tests.Accounts;
 public class NewAccounts
 {
@@ -15,5 +18,7 @@ public class NewAccounts
 
         Assert.Equal(correctOpeningBalance, myBalance);
         Assert.Equal(correctOpeningBalance, yourBalance);
+
+
     }
 }
