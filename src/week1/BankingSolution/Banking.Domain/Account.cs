@@ -6,8 +6,17 @@ namespace Banking.Domain;
 public class Account
 {
     private decimal _currentBalance = 5000;
+    public enum AccountTypes { Standard, Gold, Platinum };
+
+    public AccountTypes AccountType = AccountTypes.Standard;  //zero means standad account, 1 means gold, etc
+
     public void Deposit(decimal amountToDeposit)
     {
+        var bonus = 0m;
+        if (AccountType == AccountTypes.Gold)
+        {
+            bonus = amountToDeposit * .20M;
+        }
 
         CheckTransactionAmount(amountToDeposit);
 
