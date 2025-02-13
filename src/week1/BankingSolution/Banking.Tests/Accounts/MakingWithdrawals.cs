@@ -1,83 +1,85 @@
-﻿
+
 using Banking.Domain;
+using Banking.Tests.TestDoubles;
 
 namespace Banking.Tests.Accounts;
 public class MakingWithdrawals
 {
 
-    [Theory]
-    [InlineData(42.23)]
-    [InlineData(3.23)]
+  [Theory]
+  [InlineData(42.23)]
+  [InlineData(3.23)]
+  public void MakingWithdrawalsDecreasesTheBalance(decimal amountToWithdraw)
+  {
+    var account = new Account(new DummyBonusCalculator());
+    var openingBalance = account.GetBalance();
 
 
-    public void MakingWithdrawalsDecreasesTheBalance(decimal amountToWithdraw)
+    account.Withdraw(amountToWithdraw);
+
+    Assert.Equal(openingBalance - amountToWithdraw,
+        account.GetBalance());
+  }
+
+  [Fact]
+  public void CannotMakeWithdrawalWithNegativeNumbers()
+  {
+
+    var account = new Account(new DummyBonusCalculator());
+    Assert.Throws<AccountNegativeTransactionAmountException>(() => account.Withdraw(-3));
+
+
+
+  }
+
+  [Fact]
+  public void CanWithdrawFullBalance()
+  {
+    var account = new Account(new DummyBonusCalculator());
+
+    account.Withdraw(account.GetBalance());
+
+    Assert.Equal(0, account.GetBalance());
+  }
+
+  [Fact]
+  public void WhenOverdraftBalanceIsNotReducedNotAllowed()
+  {
+
+    var account = new Account(new DummyBonusCalculator());
+    var openingBalance = account.GetBalance();
+    var amountThatRepresentsMoreThanTheCurrentBalance = openingBalance + .01M;
+
+    try
     {
-        var account = new Account();
-        var openingBalance = account.GetBalance();
-
-
-        account.Withdraw(amountToWithdraw);
-
-        Assert.Equal(openingBalance - amountToWithdraw,
-            account.GetBalance());
+      account.Withdraw(amountThatRepresentsMoreThanTheCurrentBalance);
+    }
+    catch (AccountTransactionException)
+    {
+      // cool cool. swalling this...
     }
 
-    [Fact]
-    public void CanWithdrawFullBalance()
-    {
-        var account = new Account();
+    Assert.Equal(openingBalance, account.GetBalance());
+  }
 
-        account.Withdraw(account.GetBalance());
+  [Fact]
+  public void WhenOverdraftMethodThrows()
+  {
+    var account = new Account(new DummyBonusCalculator());
+    var openingBalance = account.GetBalance();
+    var amountThatRepresentsMoreThanTheCurrentBalance = openingBalance + .01M;
+    //var exceptionThrow = false;
+    //try
+    //{
+    //    account.Withdraw(amountThatRepresentsMoreThanTheCurrentBalance);
+    //}
+    //catch (AccountOverdraftException) {
+    //    // this is what we want!
+    //    exceptionThrow = true;
+    //}
+    //    Assert.True(exceptionThrow);
 
-        Assert.Equal(0, account.GetBalance());
-    }
+    Assert.Throws<AccountOverdraftException>(() => account.Withdraw(amountThatRepresentsMoreThanTheCurrentBalance));
 
-    [Fact]
-    public void WhenOverdraftBalanceIsNotReducedNotAllowed()
-    {
-
-        var account = new Account();
-        var openingBalance = account.GetBalance();
-        var amountThatRepresentsMoreThanTheCurrentBalance = openingBalance + .01M;
-
-        try
-        {
-            account.Withdraw(amountThatRepresentsMoreThanTheCurrentBalance);
-        }
-        catch (AccountTransactionException)
-        {
-            // cool cool. swalling this...
-        }
-
-        Assert.Equal(openingBalance, account.GetBalance());
-    }
-
-    [Fact]
-    public void WhenOverdraftMethodThrows()
-    {
-        var account = new Account();
-        var openingBalance = account.GetBalance();
-        var amountThatRepresentsMoreThanTheCurrentBalance = openingBalance + .01M;
-        //var exceptionThrow = false;
-        //try
-        //{
-        //    account.Withdraw(amountThatRepresentsMoreThanTheCurrentBalance);
-        //}
-        //catch (AccountOverdraftException) {
-        //    // this is what we want!
-        //    exceptionThrow = true;
-        //}
-        //    Assert.True(exceptionThrow);
-
-        Assert.Throws<AccountOverdraftException>(() => account.Withdraw(amountThatRepresentsMoreThanTheCurrentBalance));
-
-    }
-
-    [Fact]
-    public void CannotMakeWithdrawalWithNegativeNumbers()
-    {
-
-        var account = new Account();
-        Assert.Throws<AccountTransactionException>(() => account.Withdraw(-3));
-    }
+  }
 }

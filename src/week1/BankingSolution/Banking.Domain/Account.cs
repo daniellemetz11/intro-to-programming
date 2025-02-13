@@ -1,54 +1,57 @@
-﻿
+
+
 
 namespace Banking.Domain;
 
 
 public class Account
 {
-    private decimal _currentBalance = 5000;
-    public void Deposit(decimal amountToDeposit)
+  private ICalculateBonusesForDepositsOnAccounts _bonusCalculator;
+
+  public Account(ICalculateBonusesForDepositsOnAccounts bonusCalculator)
+  {
+    _currentBalance = 5000M;
+    _bonusCalculator = bonusCalculator;
+  }
+
+  private decimal _currentBalance;
+
+  // Queries (methods where we ask for stuff)
+  public decimal GetBalance()
+  {
+    return _currentBalance;
+  }
+  public void Deposit(decimal amountToDeposit)
+  {
+
+    CheckTransactionAmount(amountToDeposit);
+
+    var bonus = _bonusCalculator.CalculateBonusForDeposit(_currentBalance, amountToDeposit);
+    _currentBalance += amountToDeposit + bonus;
+  }
+
+  // Commands - telling our account to do some work.
+  public void Withdraw(decimal amountToWithdraw)
+  {
+    CheckTransactionAmount(amountToWithdraw);
+    if (_currentBalance >= amountToWithdraw)
     {
-
-        CheckTransactionAmount(amountToDeposit);
-
-        if (amountToDeposit < 0)
-        {
-            throw new AccountNegativeTransactionAmountException();
-        }
-        _currentBalance += amountToDeposit;
-
+      _currentBalance -= amountToWithdraw;
+    }
+    else
+    {
+      throw new AccountOverdraftException();
     }
 
-    public decimal GetBalance()
+  }
+
+  // Helpers, etc. extracted from the above.
+  private void CheckTransactionAmount(decimal amount)
+  {
+    if (amount < 0)
     {
-        // "Slime it"
-        return _currentBalance;
+      throw new AccountNegativeTransactionAmountException();
     }
-
-    public void Withdraw(decimal amountToWithdraw)
-    {
-        CheckTransactionAmount(amountToWithdraw);
-
-        if (_currentBalance >= amountToWithdraw)
-        {
-            _currentBalance -= amountToWithdraw;
-        }
-        else
-        {
-            throw new AccountOverdraftException();
-        }
-
-    }
-
-
-
-
-    //dont test private methods, they only support public, which you should already have tests for 
-    private static void CheckTransactionAmount(decimal amount)
-    {
-        if(amount < 0)
-        {
-            throw new AccountNegativeTransactionAmountException();
-        }
-    }
+  }
 }
+
