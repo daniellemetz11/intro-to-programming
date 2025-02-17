@@ -20,6 +20,10 @@ public class NewAccounts
 
     Assert.Equal(correctOpeningBalance, myBalance);
     Assert.Equal(correctOpeningBalance, yourBalance);
+    Assert.Equal(myAccount.GetBalance(), yourAccount.GetBalance());
+    myAccount.Deposit(300);
+
+    Assert.NotEqual(myAccount.GetBalance(), yourAccount.GetBalance());
 
 
   }

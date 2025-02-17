@@ -1,7 +1,9 @@
-﻿
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 
-public class Calculator
+using Castle.Core.Logging;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
+using StringCalculator;
+
+public class Calculator(ILogger _logger)
 {
     public int Add(string numbers)
     {
@@ -9,6 +11,12 @@ public class Calculator
         {
             return 0;
         }
+
+    var result = numbers.Split(',', '\n').Select(int.Parse).Sum();
+
+    _logger.Write(result.ToString());
+
+
         else if(numbers.Length == 1)
         {
             Console.WriteLine(numbers);
