@@ -1,10 +1,11 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { ResourceListItem } from '../types';
+import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-link-docks-display-item',
+  selector: 'app-link-docs-display-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [DatePipe],
   template: `
     <div class="card bg-neutral text-neutral-content w-96">
       <div class="card-body items-center text-center">
@@ -21,10 +22,18 @@ import { ResourceListItem } from '../types';
               </div>
             }
           </div>
+          <div>
+            <p>
+              This was created by {{ link().createdBy }} on
+              {{ link().createdOn | date }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
   `,
   styles: ``,
 })
-export class LinkDocsDisplayItemComponent {}
+export class LinkDocsDisplayItemComponent {
+  link = input.required<ResourceListItem>();
+}

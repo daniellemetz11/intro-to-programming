@@ -30,7 +30,11 @@ import { LoginStatusComponent } from './login-status.component';
             tabindex="0"
             class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
-            <li><a routerLink="banking">Banking</a></li>
+            @for (link of links(); track link.path) {
+              <li>
+                <a [routerLink]="link.path">{{ link.text }}</a>
+              </li>
+            }
           </ul>
         </div>
         <a routerLink="" class="btn btn-ghost text-xl">Angular App</a>
@@ -39,16 +43,12 @@ import { LoginStatusComponent } from './login-status.component';
         <ul class="menu menu-horizontal px-1">
           @for (link of links(); track link.path) {
             <li>
-              <a [routerLink]="link.path"> {{ link.text }} </a>
+              <a [routerLink]="link.path">{{ link.text }}</a>
             </li>
           }
-          <li><a routerLink="banking">Banking</a></li>
         </ul>
       </div>
-      <div class="navbar-end">
-        <app-login-status />
-        <a class="btn">Log In</a>
-      </div>
+      <div class="navbar-end"><app-login-status /></div>
     </div>
   `,
   styles: ``,
@@ -57,5 +57,6 @@ export class NavBarComponent {
   links = signal([
     { path: 'banking', text: 'Banking' },
     { path: 'resources', text: 'Developer Resources' },
+    { path: 'counter', text: 'Counter Demo' },
   ]);
 }

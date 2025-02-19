@@ -1,43 +1,31 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
-import { ResourceListItem } from '../types';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  resource,
+} from '@angular/core';
+import { LinkDocsDisplayItemComponent } from './link-docs-display-item.component';
+import { ResourceStore } from '../services/resource.store';
 
 @Component({
   selector: 'app-resources-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
-  template: ` <div class="flex gap-4">
-    @for (link of links(); track link.id) {
-      <div class="card bg-neutral text-neutral-content w-96">
-        <div class="card-body items-center text-center">
-          <h2 class="card-title">Documentation: {{ link.title }}</h2>
-          <p>{{ link.description }}</p>
-          <div class="card-actions justify-end">
-            <a class="btn btn-link" [href]="link.link" target="_blank">{{
-              link.LinkText
-            }}</a>
-            <div>
-              @for (tag of link.tags; track $index) {
-                <div class="badge badge-secondary badge-outline">
-                  {{ tag }}
-                </div>
-              }
-            </div>
-          </div>
-        </div>
-      </div>
-    }
-  </div>`,
+  imports: [LinkDocsDisplayItemComponent],
+  template: `
+    <div class="flex gap-4">
+      @for (link of store.entities(); track link.id) {
+        <app-link-docs-display-item [link]="link" />
+      } @empty {
+        <p>You don't have any resources! Add Some?</p>
+      }
+    </div>
+  `,
   styles: ``,
 })
 export class ListComponent {
-  links = signal<ResourceListItem[]>([
-    {
-      id: '1',
-      title: 'Hypertheory Applied Angular Materials',
-      description: 'Class Materials for Applied Angular',
-      link: 'https://applied-angular.hypertheory.com',
-      LinkText: 'Hypertheory.com',
-      tags: ['Angular', 'TypeScript', 'Training'],
-    },
-  ]);
+  // Rate my code!
+  // What is "slime" here? The hard coded URL - this cannot abide. Not allowed to do that.
+  // What design principal are we violating? - some service that does the API stuff for us.
+  // What are the implications of this being in this component?
+  store = inject(ResourceStore);
 }

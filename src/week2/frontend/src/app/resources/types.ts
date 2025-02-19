@@ -3,6 +3,13 @@ export type ResourceListItem = {
   title: string;
   description: string;
   link: string;
-  LinkText: string;
+  linkText: string;
+  createdBy: string;
+  createdOn: string;
   tags: string[];
 };
+
+export type ResourceListItemCreateModel = Omit<
+  ResourceListItem,
+  'id' | 'createdOn' | 'createdBy' | 'tags'
+> & { tags: string };
